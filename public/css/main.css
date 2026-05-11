@@ -241,6 +241,7 @@ h3 {
 p {
   font-size: var(--text-lg);
   line-height: var(--leading-relaxed);
+  color: var(--color-text);
   /* 65ch ≈ optimal reading line length (50–75 characters)                  */
   max-width: 65ch;
   margin-bottom: var(--space-6);
@@ -532,6 +533,7 @@ main ul {
     strong {
       font-weight: var(--weight-semibold);
       color: var(--color-primary);
+      margin-right: -0.625rem;
     }
   }
 }
