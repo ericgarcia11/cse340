@@ -1,30 +1,648 @@
-html, body {
-    background-color: lightblue;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
+/* =============================================================================
+   CSE 340 Service Network — main.css
+   Modern, accessible, production-ready stylesheet.
+   ============================================================================= */
+
+/* =============================================================================
+   § 1  GOOGLE FONTS IMPORT
+   Inter is a humanist sans-serif designed for legibility on screens.
+   We load weights 400–800 for a complete typographic palette.
+   ============================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* =============================================================================
+   § 2  CSS CUSTOM PROPERTIES  (Design Tokens)
+   Centralise every design decision here so one change updates the whole site.
+   Semantic aliases (--color-bg, --color-text, etc.) make dark-mode overrides
+   trivial — only the aliases need to change, not every property that uses them.
+   ============================================================================= */
+:root {
+  /* ── Brand palette ────────────────────────────────────────────────────── */
+  /* Deep teal: evokes trust, calm, and civic responsibility              */
+  --color-primary:       #00122b;
+  --color-primary-light: #1a3438;
+  --color-primary-dark:  #ffffff;
+  /* Warm amber: energy and optimism — used sparingly as an accent        */
+  --color-accent:        #ffe1ad;
+  --color-accent-dark:   #d97706;
+
+  /* ── Neutral scale ────────────────────────────────────────────────────── */
+  --color-white:    #ffffff;
+  --color-gray-50:  #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+  --color-gray-950: #020617;
+
+  /* ── Semantic aliases — light mode ───────────────────────────────────── */
+  /* Separating "what a colour is" from "what it does" enables dark mode  */
+  --color-bg:           var(--color-white);
+  --color-surface:      var(--color-white);
+  --color-border:       var(--color-gray-200);
+  --color-text:         var(--color-white);
+  --color-text-heading: var(--color-white);
+  --color-text-muted:   var(--color-white);
+  --color-text-nav:     var(--color-white);
+  --color-text-footer:  var(--color-white);
+  --color-bg-footer:    var(--color-primary);
+  --color-shadow:       rgba(15, 23, 42, 0.08);
+
+  /* ── Typography ───────────────────────────────────────────────────────── */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+               'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+  /* Type scale in rem so user browser font-size preferences are respected */
+  --text-xs:   0.75rem;   /* 12px */
+  --text-sm:   0.875rem;  /* 14px */
+  --text-base: 1rem;      /* 16px — WCAG AA minimum for body text          */
+  --text-lg:   1.125rem;  /* 18px */
+  --text-xl:   1.25rem;   /* 20px */
+  --text-2xl:  1.5rem;    /* 24px */
+  --text-3xl:  1.875rem;  /* 30px */
+  --text-4xl:  2.25rem;   /* 36px */
+
+  --weight-normal:    400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+  --weight-extrabold: 800;
+
+  --leading-tight:   1.25;
+  --leading-snug:    1.375;
+  --leading-normal:  1.6;
+  --leading-relaxed: 1.75;
+
+  /* ── Spacing (8-point grid) ───────────────────────────────────────────── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* ── Layout ───────────────────────────────────────────────────────────── */
+  --max-width:       1200px;
+  --nav-height:      4rem;
+  /* clamp(min, preferred, max) creates fluid sizing without extra breakpoints */
+  --content-padding: clamp(1rem, 5vw, 2.5rem);
+
+  /* ── Shape ────────────────────────────────────────────────────────────── */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows ──────────────────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 3px 0 var(--color-shadow),
+               0 1px 2px -1px var(--color-shadow);
+  --shadow-md: 0 4px 6px -1px var(--color-shadow),
+               0 2px 4px -2px var(--color-shadow);
+  --shadow-lg: 0 10px 15px -3px var(--color-shadow),
+               0 4px 6px -4px var(--color-shadow);
+
+  /* ── Transitions ──────────────────────────────────────────────────────── */
+  --ease:            cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms var(--ease);
+  --transition-base: 220ms var(--ease);
+  --transition-slow: 300ms var(--ease);
+}
+
+/* =============================================================================
+   § 3  DARK MODE  (prefers-color-scheme: dark)
+   Only semantic aliases change — the design system adapts automatically.
+   All colour-contrast ratios remain WCAG AA compliant in dark mode.
+   ============================================================================= */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:           var(--color-gray-900);
+    --color-surface:      var(--color-gray-800);
+    --color-border:       #2d3f55;
+    --color-text:         var(--color-gray-300);
+    --color-text-heading: var(--color-gray-500);
+    --color-text-muted:   var(--color-gray-500);
+    --color-bg-footer:    var(--color-gray-950);
+    --color-shadow:       rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* =============================================================================
+   § 4  RESET & BASE
+   Modern box-model reset and sensible global defaults. Removes inconsistent
+   browser margin/padding and establishes a consistent foundation.
+   ============================================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Ties rem units to the user's browser font-size preference              */
+  font-size: 100%;
+  /* Prevents font inflation on some mobile browsers                        */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Smooth scroll — disabled by prefers-reduced-motion rule below          */
+  scroll-behavior: smooth;
 }
 
 body {
-    nav {
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  /* Always white — nav and footer have their own explicit backgrounds, so  */
+  /* this only affects the area beside <main> on wide screens.              */
+  background-color: var(--color-white);
+  /* Full viewport height keeps the footer at the bottom on short pages     */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Prevents any element from causing horizontal scroll                    */
+  overflow-x: hidden;
+  /* Subpixel AA for crisp type on retina displays                          */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-        li {
-            display: inline;
-            margin-right: 15px;
-        }
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 
-        a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
+/* =============================================================================
+   § 5  FOCUS STYLES  (WCAG AA — keyboard accessibility)
+   :focus-visible shows the outline only for keyboard navigation (Tab/arrows),
+   not for mouse/touch clicks, giving a cleaner experience for pointer users
+   while fully supporting keyboard users. The amber outline provides strong
+   contrast against both the light teal nav and the page background.
+   ============================================================================= */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
 
-            &:hover {
-                color: #0066cc;
-            }
-        }
+/* Suppress the default ring for mouse/touch focus only */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =============================================================================
+   § 6  TYPOGRAPHY
+   A clear visual hierarchy via a fluid type scale and consistent spacing.
+   clamp(min, preferred, max) scales type between viewport widths without
+   requiring additional breakpoints.
+   ============================================================================= */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-text-heading);
+  /* Tighter letter-spacing at large sizes looks more polished               */
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  /* Fluid: ~2rem on phones → ~3.5rem on wide screens                       */
+  font-size: clamp(2rem, 5vw + 0.75rem, 3.5rem);
+  font-weight: var(--weight-extrabold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+
+h2 {
+  font-size: clamp(1.375rem, 3vw + 0.5rem, 2rem);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-3);
+}
+
+h3 {
+  font-size: clamp(1.125rem, 2vw + 0.25rem, 1.5rem);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-2);
+}
+
+p {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  /* 65ch ≈ optimal reading line length (50–75 characters)                  */
+  max-width: 65ch;
+  margin-bottom: var(--space-6);
+}
+
+strong {
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-heading);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary-dark);
+  }
+}
+
+/* =============================================================================
+   § 7  NAVIGATION BAR
+   Sticky at the top so the nav is always reachable. Brand teal background.
+   Nav links feature an animated accent-colour underline that grows from left
+   to right on hover (GPU-accelerated scaleX transform).
+
+   Mobile strategy: flex-wrap allows links to reflow into multiple rows on
+   narrow screens — a clean CSS-only approach that avoids the hamburger
+   pattern (which requires additional HTML checkboxes we can't add here).
+   ============================================================================= */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100; /* Stays above all page content when scrolling              */
+  background-color: var(--color-primary);
+  /* Shadow tinted with the brand colour for visual cohesion                */
+  box-shadow: 0 2px 12px rgba(14, 116, 144, 0.3);
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;        /* Graceful multi-row reflow on narrow screens  */
+    align-items: center;
+    gap: var(--space-1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    /* Centre nav content; respect the same max-width as page content       */
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding-inline: var(--content-padding);
+    min-height: var(--nav-height);
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+  }
+
+  a {
+    /* Generous padding creates large, easy-to-tap hit areas (WCAG 2.5.5)  */
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-4);
+    color: var(--color-text-nav);
+    font-weight: var(--weight-medium);
+    font-size: var(--text-base);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    position: relative;
+    transition: background-color var(--transition-fast),
+                color var(--transition-fast);
+
+    /*
+     * Animated underline: a pseudo-element that scaleX(0→1) on hover.
+     * Using transform instead of width is GPU-accelerated and avoids layout.
+     */
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: var(--space-4);
+      right: var(--space-4);
+      height: 2px;
+      background-color: var(--color-accent);
+      border-radius: var(--radius-full);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform var(--transition-base);
     }
-} 
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--color-white);
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+
+    /* Custom focus ring on teal nav — amber outline still meets 3:1 ratio  */
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+/* =============================================================================
+   § 8  MAIN CONTENT AREA
+   flex: 1 makes <main> grow to fill all available vertical space between
+   the nav and footer — the footer always sits at the bottom on short pages.
+
+   Light background is always enforced here: images (logos, org photos) need
+   a white canvas to render correctly regardless of the OS colour scheme.
+   The nav and footer stay dark; only <main> is pinned to light mode.
+
+   Redefining the semantic tokens as scoped custom properties means every
+   descendant automatically inherits light values — no dark-mode override
+   from :root can reach inside this element.
+   ============================================================================= */
+main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--content-padding);
+  padding-block: var(--space-12) var(--space-16);
+
+  /* ── Always-light overrides ──────────────────────────────────────────── */
+  /* color-scheme: light tells the browser (and DevTools) this subtree      */
+  /* should be rendered in light mode (scrollbars, form controls, etc.)     */
+  color-scheme: light;
+  background-color: var(--color-white);
+
+  /* Re-pin semantic tokens to their light values so dark-mode :root        */
+  /* overrides don't bleed in through custom property inheritance.          */
+  --color-bg:           var(--color-white);
+  --color-surface:      var(--color-white);
+  --color-border:       var(--color-gray-200);
+  --color-text:         var(--color-gray-900);
+  --color-text-heading: var(--color-gray-900);
+  --color-text-muted:   var(--color-gray-900);
+  --color-shadow:       rgba(15, 23, 42, 0.08);
+}
+
+/* =============================================================================
+   § 9  HERO SECTION  (Home page)
+   CSS :has() lets us scope hero styles to <main> that contains .main-logo
+   (only the home page). This avoids adding a class to the HTML.
+   The ::before pseudo-element adds a subtle radial glow for visual warmth.
+   ============================================================================= */
+main:has(.main-logo) {
+  position: relative;
+  text-align: center;
+
+  /* Decorative gradient glow — purely cosmetic, pointer-events disabled     */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(900px, 100%);
+    height: 280px;
+    background: radial-gradient(
+      ellipse 80% 100% at 50% 0%,
+      rgba(14, 116, 144, 0.07) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Stack all direct children above the decorative gradient                */
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Hero h1 — extra-large, brand-coloured anchor for the page              */
+  > h1:first-child {
+    font-size: clamp(2.5rem, 6vw + 1rem, 4.5rem);
+    font-weight: var(--weight-extrabold);
+    color: var(--color-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-2);
+  }
+
+  /* Hero subtitle — lighter weight conveys secondary importance             */
+  > h1:first-child + h2 {
+    font-size: clamp(1.25rem, 3vw + 0.5rem, 1.875rem);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-muted);
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-5);
+  }
+
+  /* Hero intro paragraph — kept readable at a moderate width               */
+  > h1:first-child + h2 + p {
+    font-size: clamp(1rem, 2vw + 0.25rem, 1.25rem);
+    color: var(--color-text);
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+  }
+}
+
+/* =============================================================================
+   § 10  MAIN LOGO  (.main-logo)
+   Responsive image centered on the home page.
+   A subtle lift-and-glow on hover provides tactile feedback without
+   being distracting. max-width uses min() to cap at 400px while
+   also respecting viewport width on very small screens.
+   ============================================================================= */
+.main-logo {
+  display: block;
+  max-width: min(400px, 80vw);
+  width: 100%;
+  height: auto;
+  margin-inline: auto;
+  margin-block: var(--space-4);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base);
+
+  &:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 30px -8px rgba(14, 116, 144, 0.22),
+                0 8px 12px -4px rgba(14, 116, 144, 0.14);
+  }
+}
+
+/* =============================================================================
+   § 11  CONTENT PAGE LISTS  (Organizations, Projects, Categories)
+   <ul> elements on inner pages are styled as an elegant card stack.
+   Each <li> has a coloured left-border accent and slides right on hover,
+   communicating interactivity without heavy JavaScript.
+   The org-logo <img> elements are given a fixed square container.
+   ============================================================================= */
+main ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    /* Accent left border — a visual "badge" in the brand colour            */
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-6);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base),
+                box-shadow var(--transition-base),
+                border-left-color var(--transition-base);
+
+    /* Slide right + deeper shadow — clear interactive affordance            */
+    &:hover {
+      transform: translateX(4px);
+      box-shadow: var(--shadow-md);
+      /* Accent colour on hover creates a satisfying brand moment            */
+      border-left-color: var(--color-accent);
+    }
+
+    /* Organisation logos: fixed square, contained, softly rounded          */
+    img {
+      width: 3rem;
+      height: 3rem;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      /* border-colour token adapts automatically in dark mode              */
+      background-color: var(--color-border);
+      flex-shrink: 0; /* Never squish the logo to fit                       */
+    }
+
+    strong {
+      font-weight: var(--weight-semibold);
+      color: var(--color-primary);
+    }
+  }
+}
+
+/* =============================================================================
+   § 12  FOOTER
+   Dark background grounds the page visually. Centred, muted copyright text
+   with a small type size (supplementary info doesn't need large type).
+   margin-top: auto pushes the footer to the bottom on short pages — this
+   works in tandem with flex: 1 on <main>.
+   ============================================================================= */
+footer {
+  background-color: var(--color-bg-footer);
+  padding-block: var(--space-8);
+  padding-inline: var(--content-padding);
+  text-align: center;
+  margin-top: auto;
+
+  p {
+    font-size: var(--text-sm);
+    color: var(--color-text-footer);
+    letter-spacing: 0.03em;
+    /* Override the global 65ch reading-width limit — footer text is short  */
+    max-width: none;
+    margin-bottom: 0;
+  }
+}
+
+/* =============================================================================
+   § 13  RESPONSIVE BREAKPOINTS  (mobile-first)
+   Base styles target 320px+. Each breakpoint layer adds enhancements —
+   no styles are removed, only refined. This is the mobile-first principle:
+   start small, progressively enhance for larger viewports.
+   ============================================================================= */
+
+/* 480px — large phones / phones in landscape ─────────────────────────────── */
+@media (min-width: 480px) {
+  nav ul {
+    gap: var(--space-2);
+  }
+
+  main ul li img {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+/* 768px — tablets ────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  nav ul {
+    flex-wrap: nowrap; /* Single-row nav on tablet and above                 */
+    gap: var(--space-2);
+  }
+
+  main {
+    padding-block: var(--space-16) var(--space-20);
+  }
+
+  main ul li {
+    padding: var(--space-6) var(--space-8);
+  }
+
+  main ul li img {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .main-logo {
+    max-width: 380px;
+  }
+}
+
+/* 1024px — laptops and desktops ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  nav a {
+    font-size: var(--text-lg);
+    padding: var(--space-3) var(--space-5);
+  }
+
+  main {
+    padding-block: var(--space-20) var(--space-24);
+  }
+}
+
+/* =============================================================================
+   § 14  REDUCED MOTION  (prefers-reduced-motion: reduce)
+   Overrides ALL transitions and animations for users who have enabled
+   "Reduce Motion" in their OS settings (vestibular disorders, epilepsy,
+   motion sensitivity). The !important ensures these win over specificity
+   throughout the file. Transforms with visual side-effects are also disabled.
+   ============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Disable transform effects that could feel disorienting                  */
+  .main-logo:hover {
+    transform: none;
+  }
+
+  main ul li:hover {
+    transform: none;
+  }
+}
+

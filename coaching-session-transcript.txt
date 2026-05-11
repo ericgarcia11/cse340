@@ -1,0 +1,61 @@
+User: Week 01 Coaching Session Prompt
+Assistant: Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay—and even encouraged—to say "I don't know" or "I made a mistake." That's the fastest way we'll learn today.
+User: Eric Garcia
+Assistant: Great, Eric — thanks for sharing your name. This is a safe space, and we’ll treat this as a learning conversation where it’s totally okay to explore and make mistakes.
+Assistant: Looking at your server.js routing around the app.get('/', ...), app.get('/organizations', ...), and app.get('/projects', ...) handlers, what do you think Express is doing there and why did you choose to define those paths in that way?
+User: I think express is the core dependency in my project, because it's the responsible for turning it in a server. When a request arrive from client, it verifies, based on the method, url, and params (in the future) what must be delivered for the client. For example, when we receive a GET method request, with no subfolder name/path, Express will use the rule on line 29 to render the template 'home', passing the 'title' variable to it, and then deliver the rendered page for the client, as it follows:
+app.get('/', (req, res) => {
+    const title = 'Home';
+    res.render('home', { title });});
+Assistant: That’s a good explanation, Eric — you’re right that Express routes requests by HTTP method and path, and that res.render('home', { title }) builds the page with that variable.
+Assistant: Looking at the JavaScript in server.js, especially this part:
+app.get('/', (req, res) => {
+    const title = 'Home';
+    res.render('home', { title });
+});
+what do you think is happening with the arrow function, const title, and the object shorthand { title }, and why did you choose that style for this route?
+User: Good question, I don't know. Why?
+Assistant: Great question, Eric — this is exactly the kind of thing worth understanding.
+Assistant: In the snippet on line 29 of server.js:
+- app.get('/', (req, res) => { ... }) is registering a route handler for GET requests to '/'. The arrow function is the callback Express calls when that route matches.
+- const title = 'Home'; creates a block-scoped constant named title. It means that inside this route, title won’t be reassigned, which is a nice way to express “this value does not change here.”
+- res.render('home', { title }) tells Express/EJS to render the home template and pass an object of template data. The { title } syntax is shorthand for { title: title }, so EJS can use <%= title %> inside the view.
+
+It’s a clean, modern JavaScript style and it keeps the route simple. Since you’re already using Node modules and EJS, this is a good way to pass template data in a readable way.
+
+What part of this line do you feel most comfortable with, and what part would you like to experiment with next in your code?
+User: Sorry but I didn't get your question.
+Assistant: Reviewing the EJS and CSS files next so I can guide the remaining topics clearly.
+User: No, now I think I got it. It works similar to a resolver and schema from a GraphQL API. I mean, the first line register the route on Express like a schema, and then the arrow function is like a resolver, handling the request and delivering data to Express, so it can deliver it for the client.
+Assistant: Nice, Eric — that is a really useful analogy. app.get(...) is like the route entrypoint, and the arrow function is the handler that resolves the response, similar to GraphQL resolvers.
+Assistant: Looking at src/views/home.ejs together with src/views/partials/header.ejs and src/views/partials/footer.ejs, how do you understand the partial includes working, and why does it help to split the page into those partial files?
+User: As it was explained in the lesson earlier, it's one of the most useful architeture in the project. If I need in the future, with dozens of pages, to update the nav, I will have to access each file in order to update the same code instead of just updating one partial if I don't use this architeture.
+Assistant: That’s exactly right, Eric — using partials is a strong architectural choice for maintainability and DRY code.
+Assistant: In src/views/home.ejs you include partials/header and partials/footer; can you explain how that makes the page structure easier and what you’d put in a shared partial versus a page-specific file?
+User: Sure. Here is home now: <%- include('partials/header') %> ... The partials are parts of the page repetitive in others pages, as the nav and footer. The <main> content is different in all pages, so it makes sense being static on each page.
+Assistant: Nice work, Eric — your explanation is solid and shows you understand why partials are useful.
+Assistant: I noticed your CSS in public/css/main.css uses nesting like this:
+body {
+    nav {
+        ul {
+That pattern looks like Sass/SCSS syntax, not plain browser CSS. Do you expect this file to be processed by a preprocessor, or would you want to change it so the browser can read it directly?
+User: I don't know.
+Assistant: That’s okay, Eric — this is a good moment to learn.
+Assistant: Your CSS file currently has this nested syntax:
+body {
+    nav {
+        ul {
+}
+That is valid in Sass/SCSS, but plain browser CSS does not support nesting like that. In a normal .css file, you need flat selectors such as:
+body {
+    background-color: lightblue;
+}
+nav ul {
+    list-style-type: none;
+}
+nav ul li {
+    display: inline;
+}
+Would you like me to help you rewrite public/css/main.css so it works directly in the browser?
+User: Well I am not sure this session has this goal. Make sure you are on the way to finish the coach session as it was setted on my first message.
+Assistant: I’ve reviewed our conversation and we are on track with the four required topics: Express routing, JavaScript language principles, EJS partials/pages, and frontend CSS.
