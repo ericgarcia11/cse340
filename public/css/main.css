@@ -264,6 +264,16 @@ a {
   }
 }
 
+/* Links inside main always render on a light background, so override the   */
+/* global hover colour (white) with the amber accent for visible contrast.  */
+main a {
+  color: var(--color-primary);
+
+  &:hover {
+    color: var(--color-accent-dark);
+  }
+}
+
 /* =============================================================================
    § 7  NAVIGATION BAR
    Sticky at the top so the nav is always reachable. Brand teal background.
