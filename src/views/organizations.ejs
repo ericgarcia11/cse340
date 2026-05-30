@@ -8,6 +8,6 @@
             <li><img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo"><a href="/organization/<%= organization.organization_id %>"><%= organization.name %></a>: <%= organization.contact_email %></li>
         <% }); %>
     </ul>
+    <a href="/new-organization" class="btn-primary">Add a new organization</a>
 </main>
-
 <%- include('partials/footer') %>

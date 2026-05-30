@@ -549,7 +549,181 @@ main ul {
 }
 
 /* =============================================================================
-   § 12  FOOTER
+   § 12  FLASH MESSAGES
+   Appears directly below the nav. Each type maps to a semantic colour:
+   success → green, error → red, warning → amber, info → teal.
+   The container stacks individual banners vertically when multiple messages
+   are queued. A subtle left-border accent mirrors the card list style.
+   ============================================================================= */
+.flash-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--content-padding);
+  /* Centred, consistent with the nav and page content max-width            */
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+.flash {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  border-left: 4px solid transparent;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  /* Subtle shadow lifts the banner off the background                      */
+  box-shadow: var(--shadow-sm);
+}
+
+.flash-success {
+  background-color: #f0fdf4;
+  border-left-color: #16a34a;
+  color: #15803d;
+}
+
+.flash-error {
+  background-color: #fef2f2;
+  border-left-color: #dc2626;
+  color: #b91c1c;
+}
+
+.flash-warning {
+  background-color: #fffbeb;
+  border-left-color: var(--color-accent-dark);
+  color: #b45309;
+}
+
+.flash-info {
+  background-color: #f0f9ff;
+  border-left-color: #0284c7;
+  color: #0369a1;
+}
+
+/* =============================================================================
+   § 14  FORMS
+   Consistent with the card/list design language: white surface, border, and
+   the brand left-accent on focus. The form is capped at a readable width so
+   fields never stretch across the full page on wide screens.
+   ============================================================================= */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 36rem;      /* ~576px — comfortable single-column form width   */
+  margin-top: var(--space-6);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-gray-700);
+  letter-spacing: 0.01em;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-gray-900);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  /* Remove browser-specific appearance for consistency                     */
+  appearance: none;
+  -webkit-appearance: none;
+
+  &::placeholder {
+    color: var(--color-gray-500);
+  }
+
+  &:hover {
+    border-color: var(--color-gray-500);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 18, 43, 0.12);
+  }
+
+  &:invalid:not(:placeholder-shown) {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+  }
+}
+
+textarea {
+  resize: vertical;
+  min-height: 8rem;
+  line-height: var(--leading-relaxed);
+}
+
+/* Primary submit / action button ─────────────────────────────────────────── */
+button[type="submit"],
+.btn-primary {
+  align-self: flex-start;   /* Don't stretch full width like the fields     */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-8);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  margin-top: var(--space-6);
+  transition: background-color var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    background-color: var(--color-primary-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+}
+
+/* =============================================================================
+   § 15  FOOTER
    Dark background grounds the page visually. Centred, muted copyright text
    with a small type size (supplementary info doesn't need large type).
    margin-top: auto pushes the footer to the bottom on short pages — this
@@ -573,7 +747,7 @@ footer {
 }
 
 /* =============================================================================
-   § 13  RESPONSIVE BREAKPOINTS  (mobile-first)
+   § 16  RESPONSIVE BREAKPOINTS  (mobile-first)
    Base styles target 320px+. Each breakpoint layer adds enhancements —
    no styles are removed, only refined. This is the mobile-first principle:
    start small, progressively enhance for larger viewports.
@@ -629,7 +803,7 @@ footer {
 }
 
 /* =============================================================================
-   § 14  REDUCED MOTION  (prefers-reduced-motion: reduce)
+   § 17  REDUCED MOTION  (prefers-reduced-motion: reduce)
    Overrides ALL transitions and animations for users who have enabled
    "Reduce Motion" in their OS settings (vestibular disorders, epilepsy,
    motion sensitivity). The !important ensures these win over specificity
