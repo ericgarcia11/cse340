@@ -10,6 +10,8 @@
             <li><a href="/project/<%= project.project_id %>"><%= project.title %></a></li>
         <% }); %>
     </ul>
-    <a href="/edit-category/<%= categoryDetails.category_id %>" class="btn-primary">Edit Category</a>
+    <% if (user && user.role_name === 'admin') { %>
+        <a href="/edit-category/<%= categoryDetails.category_id %>" class="btn-primary">Edit Category</a>
+    <% } %>
 </main>
 <%- include('partials/footer') %>

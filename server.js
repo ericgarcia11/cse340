@@ -51,6 +51,12 @@ app.use((req, res, next) => {
 
 // Middleware to make NODE_ENV available to all templates
 app.use((req, res, next) => {
+    res.locals.isLoggedIn = false;
+    if (req.session && req.session.user) {
+        res.locals.isLoggedIn = true;
+    }
+
+    res.locals.user = req.session?.user || null;
     res.locals.nodeEnv = nodeEnv;
     next();
 });
@@ -83,6 +89,50 @@ app.use((err, req, res, next) => {
     
     // Render the appropriate error template
     res.status(status).render(`errors/${template}`, context);
+});
+
+// Middleware to require specific role
+function requireRole(roleName) {
+    return (req, res, next) => {
+        // Assumes user object is attached to req by authentication middleware
+        if (!req.user) {
+            return res.status(401).send('Not authenticated');
+        }
+
+        if (req.user.role_name !== roleName) {
+            return res.status(403).send('Insufficient permissions');
+        }
+
+        // User has required role, allow request to proceed
+        next();
+    };
+}
+
+// Controller with role-specific logic
+async function editUserProfile(req, res) {
+    const targetUserId = req.params.userId;
+    const currentUser = req.user;
+
+    // Admins can edit anyone, users can only edit themselves
+    const canEdit = currentUser.role_name === 'admin' || 
+                   currentUser.user_id === parseInt(targetUserId);
+
+    if (!canEdit) {
+        return res.status(403).send('You cannot edit this profile');
+    }
+
+    // Proceed with editing logic
+    // ...
+}
+
+// Using the middleware on routes
+app.get('/admin/dashboard', requireRole('admin'), (req, res) => {
+    res.render('admin/dashboard');
+});
+
+app.post('/admin/users/:id/edit', requireRole('admin'), (req, res) => {
+    // Only admins can reach this code
+    // Handle user editing logic
 });
 
 // app.get('/', (req, res) => {

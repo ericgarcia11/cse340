@@ -10,6 +10,8 @@
                 </li>
             <% }); %>
         </ul>
-        <a href="/new-project" class="btn-primary">Add a new project</a>
+        <% if (user && user.role_name === 'admin') { %>
+            <a href="/new-project" class="btn-primary">Add a new project</a>
+        <% } %>
     </main>
 <%- include('partials/footer') %>
